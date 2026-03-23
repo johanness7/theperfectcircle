@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3036128934622320" crossorigin="anonymous"></script>
+    
+    <link rel="icon" type="image/png" sizes="1280x1280" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>s7 hub | The Perfect Circle</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #f5f5f0; 
+            --card-bg: #ffffff;
+            --text: #2c2c2e;
+            --accent: #d4a373;
+            --border: #e0e0d5;
+            --success: #2a9d8f;
+            --error: #e63946;
+        }
+
+        /* Standard-Struktur wie in deinen anderen Spielen */
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden; /* Kein Scrollen auf der Seite */
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Georgia', serif;
+            display: flex; flex-direction: column;
+            user-select: none; /* Textmarkierung verhindern */
+            touch-action: none; /* Standard-Touch-Gesten auf Canvas verhindern */
+        }
+
+        /* Header & Logo Zentrierung */
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .header img {
+            height: 60px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .header h1 { 
+            font-size: 3.5rem; 
+            font-weight: 400; 
+            margin: 0; 
+            letter-spacing: -1px; 
+            text-align: center; 
+        }
+
+        /* Ad-Sidebar Styling */
+        .ad-sidebar {
+            width: 160px; 
+            height: 600px;
+            position: fixed; 
+            top: 100px;
+            z-index: 50;
+        }
+        .ad-left { left: 20px; }
+        .ad-right { right: 20px; }
+
+        @media (max-width: 1250px) { .ad-sidebar { display: none; } }
+
+        .main-content {
+            width: 100%; max-width: 700px;
+            margin: 0 auto;
+            padding: 60px 20px 0 20px;
+            display: flex; flex-direction: column; align-items: center;
+            flex-grow: 1;
+            position: relative;
+        }
+
+        /* Spielbereich (Canvas) */
+        #game-container {
+            width: 100%;
+            max-width: 500px; /* Maximale Breite für das Zeichenfeld */
+            height: 500px; /* Quadratisches Zeichenfeld */
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            position: relative;
+            cursor: crosshair;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Der Punkt in der Mitte */
+        #center-point {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--text);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none; /* Klicks gehen durch den Punkt */
+            z-index: 10;
+        }
+
+        /* Ergebnis-Display */
+        .result-display {
+            margin-top: 20px;
+            font-family: sans-serif;
+            text-align: center;
+            min-height: 100px;
+            width: 100%;
+        }
+
+        .score-value { font-size: 42px; font-weight: 900; color: var(--accent); }
+        .rank-text { font-size: 18px; opacity: 0.6; margin-top: 5px; }
+
+        /* Footer - Exakt wie in deinen Spielen */
+        .footer-fixed {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--bg); padding: 10px 0 15px 0;
+            display: flex; flex-direction: column; align-items: center; z-index: 1000;
+        }
+        .made-by { font-family: sans-serif; font-size: 12px; opacity: 0.6; margin-bottom: 8px; }
+        .social-links { width: 100%; max-width: 550px; border-top: 1px solid var(--border); padding-top: 15px; display: flex; justify-content: center; gap: 30px; }
+        .social-links a { color: var(--text); text-decoration: underline; font-family: sans-serif; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+        .legal-links { font-size: 12px; opacity: 0.5; margin-top: 20px; font-family: sans-serif; text-align: center; }
+        .legal-links a { color: inherit; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="ad-sidebar ad-left">
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:160px;height:600px"
+             data-ad-client="ca-pub-3036128934622320"
+             data-ad-slot="2391622638"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <div class="ad-sidebar ad-right">
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:160px;height:600px"
+             data-ad-client="ca-pub-3036128934622320"
+             data-ad-slot="2391622638"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <a href="https://johanness7.github.io/"><img src="logo.png" alt="s7 hub logo"></a>
+            <h1>The Perfect Circle</h1>
+        </div>
+        
+        <div id="game-container">
+            <div id="center-point"></div>
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="result-display">
+            <div id="msg" class="rank-text">Zeichne einen Kreis um den Punkt.</div>
+            <div id="result-area" style="display: none;">
+                <div class="score-value"><span id="score-percent">0</span>%</div>
+                <div id="rank" class="rank-text">Status: Menschlich 🚶</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-fixed">
+        <div class="made-by">made by johannes_s7</div>
+        <div class="social-links">
+            <a href="https://www.tiktok.com/@johannas.s7" target="_blank"><i class="fa-brands fa-tiktok"></i> TikTok</a>
+            <a href="https://www.instagram.com/johannessiebecke" target="_blank"><i class="fa-brands fa-instagram"></i> Instagram</a>
+        </div>
+        <div class="legal-links">
+            <a href="privacy.html">Privacy & Policy</a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('game-container');
+        const msg = document.getElementById('msg');
+        const resultArea = document.getElementById('result-area');
+        const scorePercent = document.getElementById('score-percent');
+        const rankDisplay = document.getElementById('rank');
+
+        // Canvas Größe anpassen
+        function resizeCanvas() {
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#d4a373'; // var(--accent)
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let isDrawing = false;
+        let points = [];
+        let centerX, centerY;
+
+        // Spielstatus zurücksetzen
+        function resetGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            points = [];
+            isDrawing = false;
+            resultArea.style.display = "none";
+            msg.style.display = "block";
+            msg.innerText = "Zeichne einen Kreis um den Punkt.";
+            centerX = canvas.width / 2;
+            centerY = canvas.height / 2;
+        }
+
+        // Koordinaten holen (Maus oder Touch)
+        function getXY(e) {
+            const rect = canvas.getBoundingClientRect();
+            if (e.touches && e.touches.length > 0) {
+                return {
+                    x: e.touches[0].clientX - rect.left,
+                    y: e.touches[0].clientY - rect.top
+                };
+            } else {
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+            }
+        }
+
+        function startDrawing(e) {
+            if (resultArea.style.display === "block") {
+                resetGame(); // Neustart bei Klick nach Ergebnis
+                return;
+            }
+            isDrawing = true;
+            points = [];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const pos = getXY(e);
+            points.push(pos);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            msg.style.display = "none";
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getXY(e);
+            points.push(pos);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+
+            // Prüfen, ob der Kreis geschlossen ist (nahe am Startpunkt)
+            if (points.length > 30) {
+                const startPoint = points[0];
+                const dx = pos.x - startPoint.x;
+                const dy = pos.y - startPoint.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 20) {
+                    finishDrawing();
+                }
+            }
+        }
+
+        function finishDrawing() {
+            if (!isDrawing) return;
+            isDrawing = false;
+            ctx.closePath();
+            
+            if (points.length < 50) {
+                resetGame();
+                msg.innerText = "Zu klein! Versuch's nochmal.";
+                return;
+            }
+
+            calculateScore();
+        }
+
+        // Die Magie: Perfektion berechnen
+        function calculateScore() {
+            let totalDeviation = 0;
+            let idealRadius = 0;
+
+            // 1. Durchschnittlichen Radius berechnen
+            for (let point of points) {
+                const dx = point.x - centerX;
+                const dy = point.y - centerY;
+                idealRadius += Math.sqrt(dx * dx + dy * dy);
+            }
+            idealRadius /= points.length;
+
+            // 2. Abweichung jedes Punktes vom idealen Radius berechnen
+            for (let point of points) {
+                const dx = point.x - centerX;
+                const dy = point.y - centerY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                totalDeviation += Math.abs(distance - idealRadius);
+            }
+
+            // 3. Score berechnen (prozentuale Abweichung)
+            // Ein "perfekter" Kreis hat totalDeviation = 0.
+            // Wir setzen eine Basis-Abweichung, die 0% entspricht.
+            const averageDeviation = totalDeviation / points.length;
+            const maxAcceptableDeviation = idealRadius * 0.5; // 50% Abweichung ist 0 Score
+
+            let score = 100 - (averageDeviation / maxAcceptableDeviation * 100);
+            score = Math.max(0, Math.min(100, score)); // Begrenzen auf 0-100
+            score = score.toFixed(1); // Eine Nachkommastelle
+
+            showResult(score);
+        }
+
+        function showResult(score) {
+            resultArea.style.display = "block";
+            msg.style.display = "none";
+            scorePercent.innerText = score;
+
+            if (score > 98) rankDisplay.innerText = "Status: Zirkel-Gott! 📐🏆";
+            else if (score > 95) rankDisplay.innerText = "Status: Fast Perfekt! 🌟";
+            else if (score > 90) rankDisplay.innerText = "Status: Sehr Gut! 👍";
+            else if (score > 80) rankDisplay.innerText = "Status: Gut! 🙂";
+            else if (score > 50) rankDisplay.innerText = "Status: Menschlich 🚶";
+            else rankDisplay.innerText = "Status: Eher ein Ei... 🥚";
+
+            if (score > 90) {
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            }
+        }
+
+        // Event Listeners für Maus und Touch
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', finishDrawing);
+
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        window.addEventListener('touchend', finishDrawing);
+
+        // Initialisierung
+        resetGame();
+
+    </script>
+</body>
+</html>
